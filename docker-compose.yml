@@ -1,0 +1,24 @@
+services:
+  db:
+    image: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  app:
+    build: .
+    container_name: portfolio-api
+    ports:
+      - '3000:3000'
+    # depends_on:
+    #   - db
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+volumes:
+  mongo-data:
