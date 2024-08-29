@@ -1,0 +1,14 @@
+name: Portfolio API Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - release/**
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker Image
+        run: docker build .

@@ -1,0 +1,57 @@
+name: Portfolio API Tests Pipeline
+
+on:
+  push:
+    branches:
+      - 'setup/**'
+      - 'feature/**'
+      - 'hotfix/**'
+  pull_request_target:
+    branches:
+      - develop
+      - main
+
+jobs:
+  setup:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.15
+          cache: 'npm'
+      - name: Install node_modules
+        run: npm ci
+
+  unit_tests:
+    needs: [setup]
+    runs-on: self-hosted
+    steps:
+      - name: Run Unit Tests
+        run: npm run test
+
+  e2e_tests:
+    needs: [setup]
+    runs-on: self-hosted
+
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+          POSTGRES_DB: tests
+    env:
+      DATABASE_URL: mongodb://root:example@mongo:27017/tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.15
+          cache: 'npm'
+      - name: Install node_modules
+        run: npm ci
+      - name: Run E2E Tests
+        run: npm run test:e2e
