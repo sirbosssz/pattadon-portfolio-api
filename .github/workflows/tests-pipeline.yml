@@ -34,6 +34,7 @@ jobs:
   e2e_tests:
     needs: [setup]
     runs-on: self-hosted
+    environment: Test
 
     services:
       mongodb:
