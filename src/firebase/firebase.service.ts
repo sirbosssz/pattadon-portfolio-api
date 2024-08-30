@@ -12,7 +12,7 @@ export class FirebaseService {
       projectId: this.configService.get<string>('FIREBASE_PROJECT_ID'),
       privateKey: this.configService
         .get<string>('FIREBASE_PRIVATE_KEY')
-        .replace(/\\n/g, '\n'),
+        ?.replace(/\\n/g, '\n'),
       privateKeyId: this.configService.get<string>('FIREBASE_PRIVATE_KEY_ID'),
       clientEmail: this.configService.get<string>('FIREBASE_CLIENT_EMAIL'),
       clientId: this.configService.get<string>('FIREBASE_CLIENT_ID'),
