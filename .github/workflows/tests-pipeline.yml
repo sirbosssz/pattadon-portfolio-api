@@ -57,8 +57,6 @@ jobs:
       FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
 
     steps:
-      - name: Debug Firebase Credentials
-        run: echo ${{ env.FIREBASE_TYPE }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
