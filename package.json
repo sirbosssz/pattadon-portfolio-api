@@ -19,6 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
@@ -29,6 +32,7 @@
     "@prisma/client": "^5.19.0",
     "firebase-admin": "^12.4.0",
     "passport": "^0.7.0",
+    "passport-http-bearer": "^1.0.1",
     "passport-jwt": "^4.0.1",
     "prisma": "^5.19.0",
     "reflect-metadata": "^0.2.0",
@@ -68,8 +72,17 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
+    ],
+    "coveragePathIgnorePatterns": [
+      ".*.module.ts",
+      ".*.entity.ts",
+      ".*.dto.ts",
+      "./main.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"

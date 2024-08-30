@@ -1,10 +1,14 @@
+version: '3.8'
+
 services:
   db:
     image: mongo
     ports:
       - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
   app:
     build: .
@@ -15,10 +19,10 @@ services:
       - db
     env_file:
       - .env
+    environment:
+      DATABASE_URL: mongodb://root:example@db:27017
     volumes:
       - .:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: npm run test:e2e
 
-volumes:
-  mongo-data:

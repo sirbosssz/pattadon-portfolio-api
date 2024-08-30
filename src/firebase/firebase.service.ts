@@ -5,6 +5,7 @@ import * as admin from 'firebase-admin'
 @Injectable()
 export class FirebaseService {
   private firebaseApp: admin.app.App
+  private isAlreadyInitialized = false
 
   constructor(private readonly configService: ConfigService) {
     const firebaseConfig = {
@@ -26,9 +27,12 @@ export class FirebaseService {
       ),
     }
 
-    this.firebaseApp = admin.initializeApp({
-      credential: admin.credential.cert(firebaseConfig),
-    })
+    if (!this.isAlreadyInitialized) {
+      this.firebaseApp = admin.initializeApp({
+        credential: admin.credential.cert(firebaseConfig),
+      })
+      this.isAlreadyInitialized = true
+    }
   }
 
   async verifyToken(token: string): Promise<admin.auth.DecodedIdToken> {
