@@ -16,6 +16,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+
+  unit_tests:
+    needs: [setup]
+    runs-on: self-hosted
+    steps:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,29 +28,34 @@ jobs:
           cache: 'npm'
       - name: Install node_modules
         run: npm ci
-
-  unit_tests:
-    needs: [setup]
-    runs-on: self-hosted
-    steps:
       - name: Run Unit Tests
         run: npm run test
 
   e2e_tests:
     needs: [setup]
     runs-on: self-hosted
+    environment: Test
 
-    services:
-      mongodb:
-        image: mongo
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
-          POSTGRES_DB: tests
+    # services:
+    #   mongodb:
+    #     image: mongo
+    #     env:
+    #       MONGO_INITDB_ROOT_USERNAME: root
+    #       MONGO_INITDB_ROOT_PASSWORD: example
     env:
-      DATABASE_URL: mongodb://root:example@mongo:27017/tests
+      DATABASE_URL: ${{ vars.DATABASE_URL}}
+      FIREBASE_TYPE: ${{ secrets.FIREBASE_TYPE }}
+      FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+      FIREBASE_PRIVATE_KEY_ID: ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
+      FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+      FIREBASE_CLIENT_ID: ${{ secrets.FIREBASE_CLIENT_ID }}
+      FIREBASE_AUTH_URI: ${{ secrets.FIREBASE_AUTH_URI }}
+      FIREBASE_TOKEN_URI: ${{ secrets.FIREBASE_TOKEN_URI }}
+      FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL }}
+      FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
+
     steps:
-      - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
