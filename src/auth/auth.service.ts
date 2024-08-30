@@ -32,7 +32,7 @@ export class AuthService {
       }
       return profile
     } catch (error) {
-      throw new UnauthorizedException('Invalid token', error)
+      throw new UnauthorizedException(error.message || 'Invalid token')
     }
   }
 }

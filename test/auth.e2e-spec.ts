@@ -7,7 +7,7 @@ import { FirebaseService } from 'src/firebase/firebase.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { PrismaClient } from '@prisma/client'
 
-describe('AuthController (e2e)', () => {
+describe('Authentication Flow (e2e)', () => {
   let app: INestApplication
   let authService: AuthService
   let firebaseService: FirebaseService
@@ -46,7 +46,7 @@ describe('AuthController (e2e)', () => {
   })
 
   describe('/auth/login (POST)', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
       await prismaClient.profile.create({
         data: {
           authId: 'test-uid',
@@ -59,7 +59,6 @@ describe('AuthController (e2e)', () => {
     it('should return user data and access token on successful login', async () => {
       const mockUser = await prismaClient.profile.findFirst()
       const mockToken = 'mock-firebase-token'
-      jest.spyOn(authService, 'validateUser').mockResolvedValue(mockUser)
       jest.spyOn(firebaseService, 'verifyToken').mockResolvedValue({
         uid: mockUser.authId,
         email: mockUser.email,
@@ -69,7 +68,6 @@ describe('AuthController (e2e)', () => {
         .post('/auth/login')
         .send({ firebaseToken: mockToken })
         .expect(201)
-      // .expect({ user: mockUser, access_token: mockToken })
 
       expect(response.body).toEqual({
         user: {
@@ -79,6 +77,58 @@ describe('AuthController (e2e)', () => {
         },
         access_token: mockToken,
       })
+    })
+
+    it('should return 401 Unauthorized if user is not found', async () => {
+      const mockToken = 'mock-firebase-token'
+      jest.spyOn(firebaseService, 'verifyToken').mockResolvedValue({
+        uid: 'non-existent-uid',
+        email: 'non-existent-email',
+      } as any)
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ firebaseToken: mockToken })
+        .expect(401)
+
+      expect(response.body.message).toEqual('Profile not found')
+    })
+
+    it('should return 401 Unauthorized if firebase login fails', async () => {
+      const mockToken = 'mock-firebase-token'
+      jest.spyOn(firebaseService, 'verifyToken').mockRejectedValue(new Error())
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({ firebaseToken: mockToken })
+        .expect(401)
+
+      expect(response.body.message).toEqual('Invalid token')
+    })
+  })
+
+  describe('/auth/check (GET)', () => {
+    it('should return 200 OK if the user is authorized', async () => {
+      const mockToken = 'mock-firebase-token'
+      jest.spyOn(firebaseService, 'verifyToken').mockResolvedValue({
+        uid: 'test-uid',
+        email: 'test@example.com',
+      } as any)
+
+      const response = await request(app.getHttpServer())
+        .get('/auth/check')
+        .set('Authorization', `Bearer ${mockToken}`)
+        .expect(200)
+
+      expect(response.body.authorize_status).toEqual('authorized')
+    })
+
+    it('should return 401 Unauthorized if the user is not authorized', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/auth/check')
+        .expect(401)
+
+      expect(response.body.message).toEqual('Unauthorized')
     })
   })
 })

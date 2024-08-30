@@ -37,8 +37,6 @@ export class ServiceAuthStrategy extends PassportStrategy(
   }
 
   validate: BearerVerifyFunction = async (token) => {
-    console.log('token', token)
-
     const { error } = await this.authService.validateServiceToken(token)
 
     if (error) throw new UnauthorizedException()
