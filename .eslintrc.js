@@ -21,5 +21,34 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    'import/order': [
+      'warn',
+      {
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: false,
+        },
+        groups: [
+          ['builtin', 'external'],
+          'internal',
+          ['index', 'parent', 'sibling'],
+        ],
+        pathGroups: [
+          {
+            pattern: '@nestjs/**',
+            group: 'builtin',
+            position: 'before',
+          },
+          {
+            pattern: 'src/**',
+            group: 'internal',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['@nestjs'],
+        distinctGroup: false,
+        'newlines-between': 'always',
+      },
+    ],
   },
-};
+}
