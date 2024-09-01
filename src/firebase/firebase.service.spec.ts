@@ -1,6 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { FirebaseService } from './firebase.service'
 import { ConfigModule } from '@nestjs/config'
+import { Test, TestingModule } from '@nestjs/testing'
+
+import { FirebaseService } from './firebase.service'
 
 jest.mock('firebase-admin')
 

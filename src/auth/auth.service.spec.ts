@@ -1,8 +1,10 @@
+import { UnauthorizedException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { AuthService } from './auth.service'
+
 import { FirebaseService } from 'src/firebase/firebase.service'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { UnauthorizedException } from '@nestjs/common'
+
+import { AuthService } from './auth.service'
 
 describe('AuthService', () => {
   let authService: AuthService

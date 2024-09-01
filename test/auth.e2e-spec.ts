@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { PrismaClient } from '@prisma/client'
 import * as request from 'supertest'
+
 import { AppModule } from 'src/app.module'
 import { AuthService } from 'src/auth/auth.service'
 import { FirebaseService } from 'src/firebase/firebase.service'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { PrismaClient } from '@prisma/client'
 
 describe('Authentication Flow (e2e)', () => {
   let app: INestApplication
-  let authService: AuthService
   let firebaseService: FirebaseService
 
   let prismaClient: PrismaClient
@@ -27,7 +27,6 @@ describe('Authentication Flow (e2e)', () => {
 
     app = moduleFixture.createNestApplication()
 
-    authService = moduleFixture.get<AuthService>(AuthService)
     firebaseService = moduleFixture.get<FirebaseService>(FirebaseService)
     prismaClient = moduleFixture.get<PrismaClient>(PrismaClient)
 

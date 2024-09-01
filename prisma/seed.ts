@@ -3,15 +3,16 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-  const profile = await prisma.profile.create({
-    data: {
-      authId: 'test-uid',
-      email: 'test@example.com',
-      fullname: 'Test User',
-    },
+  await prisma.positions.createMany({
+    data: [
+      { name: 'Fullstack Developer/Software Engineer' },
+      { name: 'Senior Developer' },
+      { name: 'Technical Lead' },
+      { name: 'Product Manager' },
+    ],
   })
 
-  return { profile }
+  return { success: true }
 }
 
 main()

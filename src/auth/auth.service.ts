@@ -1,9 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Profile } from '@prisma/client'
+import { auth } from 'firebase-admin'
+
 import { FirebaseService } from 'src/firebase/firebase.service'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { Profile } from '@prisma/client'
+
 import { DecodedToken } from './interfaces/decoded-token.interface'
-import { auth } from 'firebase-admin'
 
 @Injectable()
 export class AuthService {

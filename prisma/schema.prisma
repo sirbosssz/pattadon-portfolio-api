@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
+model Profiles {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   authId    String   @unique
   email     String   @unique
@@ -34,10 +34,10 @@ model Positions {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
 
-  profileThatLookingFor Profile[] @relation("LookingForPositions", fields: [profileLookingForId], references: [id])
+  profileThatLookingFor Profiles[] @relation("LookingForPositions", fields: [profileLookingForId], references: [id])
   profileLookingForId   String[]  @db.ObjectId
 
-  profileThatCurrentPosition Profile? @relation("CurrentPosition", fields: [profileCurrentPositionId], references: [id])
+  profileThatCurrentPosition Profiles? @relation("CurrentPosition", fields: [profileCurrentPositionId], references: [id])
   profileCurrentPositionId   String?  @unique @db.ObjectId
 
   @@map("positions")
