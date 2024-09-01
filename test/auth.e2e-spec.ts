@@ -1,15 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { PrismaClient } from '@prisma/client'
 import * as request from 'supertest'
+
 import { AppModule } from 'src/app.module'
 import { AuthService } from 'src/auth/auth.service'
 import { FirebaseService } from 'src/firebase/firebase.service'
 import { PrismaService } from 'src/prisma/prisma.service'
-import { PrismaClient } from '@prisma/client'
 
 describe('Authentication Flow (e2e)', () => {
   let app: INestApplication
-  let authService: AuthService
   let firebaseService: FirebaseService
 
   let prismaClient: PrismaClient
@@ -27,7 +27,6 @@ describe('Authentication Flow (e2e)', () => {
 
     app = moduleFixture.createNestApplication()
 
-    authService = moduleFixture.get<AuthService>(AuthService)
     firebaseService = moduleFixture.get<FirebaseService>(FirebaseService)
     prismaClient = moduleFixture.get<PrismaClient>(PrismaClient)
 
@@ -60,7 +59,7 @@ describe('Authentication Flow (e2e)', () => {
       const lookingForPositions = await prismaClient.positions.findMany({
         where: { name: { in: ['Senior Fullstack Developer', 'Tech Lead'] } },
       })
-      await prismaClient.profile.create({
+      await prismaClient.profiles.create({
         data: {
           authId: 'test-uid',
           email: 'test@example.com',
@@ -80,12 +79,12 @@ describe('Authentication Flow (e2e)', () => {
     })
 
     afterAll(async () => {
-      await prismaClient.profile.deleteMany()
+      await prismaClient.profiles.deleteMany()
       await prismaClient.positions.deleteMany()
     })
 
     it('should return user data and access token on successful login', async () => {
-      const mockUser = await prismaClient.profile.findFirst()
+      const mockUser = await prismaClient.profiles.findFirst()
       const mockToken = 'mock-firebase-token'
       jest.spyOn(firebaseService, 'verifyToken').mockResolvedValue({
         uid: mockUser.authId,
