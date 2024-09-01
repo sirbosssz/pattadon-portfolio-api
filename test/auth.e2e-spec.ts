@@ -40,20 +40,48 @@ describe('Authentication Flow (e2e)', () => {
   })
 
   afterAll(async () => {
-    await prismaClient.profile.deleteMany()
     await prismaClient.$disconnect()
     await app.close()
   })
 
   describe('/auth/login (POST)', () => {
     beforeAll(async () => {
+      await prismaClient.positions.createMany({
+        data: [
+          { name: 'Frontend Developer' },
+          { name: 'Fullstack Developer' },
+          { name: 'Senior Fullstack Developer' },
+          { name: 'Tech Lead' },
+        ],
+      })
+      const currentPosition = await prismaClient.positions.findFirst({
+        where: { name: 'Fullstack Developer' },
+      })
+      const lookingForPositions = await prismaClient.positions.findMany({
+        where: { name: { in: ['Senior Fullstack Developer', 'Tech Lead'] } },
+      })
       await prismaClient.profile.create({
         data: {
           authId: 'test-uid',
           email: 'test@example.com',
           fullname: 'Test User',
+          currentPosition: {
+            connect: {
+              id: currentPosition.id,
+            },
+          },
+          lookingForPositions: {
+            connect: lookingForPositions.map((position) => ({
+              id: position.id,
+            })),
+          },
         },
       })
+    })
+
+    afterAll(async () => {
+      await prismaClient.profile.deleteMany()
+      await prismaClient.positions.deleteMany()
     })
 
     it('should return user data and access token on successful login', async () => {

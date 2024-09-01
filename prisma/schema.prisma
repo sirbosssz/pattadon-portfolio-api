@@ -13,11 +13,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model profile {
+model Profile {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   authId    String   @unique
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   fullname  String
+
+  lookingForPositions    Positions[] @relation("LookingForPositions", fields: [lookingForPositionsIds], references: [id])
+  lookingForPositionsIds String[]    @db.ObjectId
+
+  currentPosition   Positions? @relation("CurrentPosition")
+  currentPositionId String?    @db.ObjectId
+
+  @@map("profiles")
+}
+
+model Positions {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+
+  profileThatLookingFor Profile[] @relation("LookingForPositions", fields: [profileLookingForId], references: [id])
+  profileLookingForId   String[]  @db.ObjectId
+
+  profileThatCurrentPosition Profile? @relation("CurrentPosition", fields: [profileCurrentPositionId], references: [id])
+  profileCurrentPositionId   String?  @unique @db.ObjectId
+
+  @@map("positions")
 }
