@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { JwtAuthGuard } from './jwt-auth.guard'
+import { Profile } from '@prisma/client'
 
 @Controller('auth')
 export class AuthController {
@@ -8,7 +9,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body('firebaseToken') firebaseToken: string) {
-    const user = await this.authService.validateUser(firebaseToken)
+    const user: Profile = await this.authService.validateUser(firebaseToken)
     return { user, access_token: firebaseToken }
   }
 

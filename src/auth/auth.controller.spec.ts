@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
+import { Profile } from '@prisma/client'
 
 describe('AuthController', () => {
   let authController: AuthController
@@ -29,7 +30,16 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should call validateUser and return user data with token', async () => {
-      const mockUser = { id: 1, name: 'Test User' }
+      const mockUser: Profile = {
+        id: 'mock-id',
+        authId: 'mock-auth-id',
+        email: 'mock-email',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        fullname: 'mock-fullname',
+        lookingForPositionsIds: [],
+        currentPositionId: null,
+      }
       const mockToken = 'mock-firebase-token'
       jest.spyOn(authService, 'validateUser').mockResolvedValue(mockUser)
 
