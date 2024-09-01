@@ -1,7 +1,9 @@
 import { UnauthorizedException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
+import { Profiles } from '@prisma/client'
 
 import { FirebaseService } from 'src/firebase/firebase.service'
+import { PrismaModule } from 'src/prisma/prisma.module'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 import { AuthService } from './auth.service'
@@ -21,15 +23,8 @@ describe('AuthService', () => {
             verifyToken: jest.fn(),
           },
         },
-        {
-          provide: PrismaService,
-          useValue: {
-            profile: {
-              findUnique: jest.fn(),
-            },
-          },
-        },
       ],
+      imports: [PrismaModule],
     }).compile()
 
     authService = module.get<AuthService>(AuthService)
@@ -65,13 +60,23 @@ describe('AuthService', () => {
     it('should return profile if user and profile exist', async () => {
       const token = 'valid-token'
       const decodedToken = { uid: '123', email: 'test@example.com' }
-      const profile = { id: 'profile-id', authId: '123' }
+      const profile: Profiles = {
+        id: 'profile-id',
+        authId: '123',
+        email: 'test@example.com',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        fullname: 'test',
+        lookingForPositionsIds: [],
+        currentPositionId: '',
+      }
       jest
         .spyOn(firebaseService, 'verifyToken')
         .mockResolvedValue(decodedToken as any)
+
       jest
-        .spyOn(prismaService.profile, 'findUnique')
-        .mockResolvedValue(profile as any)
+        .spyOn(prismaService.profiles, 'findUnique')
+        .mockResolvedValue(profile)
 
       const result = await authService.validateUser(token)
       expect(result).toEqual(profile)
@@ -83,7 +88,7 @@ describe('AuthService', () => {
       jest
         .spyOn(firebaseService, 'verifyToken')
         .mockResolvedValue(decodedToken as any)
-      jest.spyOn(prismaService.profile, 'findUnique').mockResolvedValue(null)
+      jest.spyOn(prismaService.profiles, 'findUnique').mockResolvedValue(null)
 
       await expect(authService.validateUser(token)).rejects.toThrow(
         UnauthorizedException,

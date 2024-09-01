@@ -59,7 +59,7 @@ describe('Authentication Flow (e2e)', () => {
       const lookingForPositions = await prismaClient.positions.findMany({
         where: { name: { in: ['Senior Fullstack Developer', 'Tech Lead'] } },
       })
-      await prismaClient.profile.create({
+      await prismaClient.profiles.create({
         data: {
           authId: 'test-uid',
           email: 'test@example.com',
@@ -79,12 +79,12 @@ describe('Authentication Flow (e2e)', () => {
     })
 
     afterAll(async () => {
-      await prismaClient.profile.deleteMany()
+      await prismaClient.profiles.deleteMany()
       await prismaClient.positions.deleteMany()
     })
 
     it('should return user data and access token on successful login', async () => {
-      const mockUser = await prismaClient.profile.findFirst()
+      const mockUser = await prismaClient.profiles.findFirst()
       const mockToken = 'mock-firebase-token'
       jest.spyOn(firebaseService, 'verifyToken').mockResolvedValue({
         uid: mockUser.authId,

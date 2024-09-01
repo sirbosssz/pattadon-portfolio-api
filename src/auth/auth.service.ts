@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { Profile } from '@prisma/client'
+import { Profiles } from '@prisma/client'
 import { auth } from 'firebase-admin'
 
 import { FirebaseService } from 'src/firebase/firebase.service'
@@ -24,12 +24,12 @@ export class AuthService {
     }
   }
 
-  async validateUser(token: string): Promise<Profile> {
+  async validateUser(token: string): Promise<Profiles> {
     try {
       const decodedToken = await this.firebaseService.verifyToken(token)
       const user = { uid: decodedToken.uid, email: decodedToken.email }
 
-      const profile: Profile | null = await this.prisma.profile.findUnique({
+      const profile: Profiles = await this.prisma.profiles.findUnique({
         where: { authId: user.uid },
       })
 

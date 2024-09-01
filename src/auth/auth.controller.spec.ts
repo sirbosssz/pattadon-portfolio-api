@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { Profile } from '@prisma/client'
+import { Profiles } from '@prisma/client'
 
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
@@ -31,7 +31,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     it('should call validateUser and return user data with token', async () => {
-      const mockUser: Profile = {
+      const mockUser: Profiles = {
         id: 'mock-id',
         authId: 'mock-auth-id',
         email: 'mock-email',
