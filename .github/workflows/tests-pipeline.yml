@@ -13,13 +13,13 @@ on:
 
 jobs:
   setup:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
   unit_tests:
     needs: [setup]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js
         uses: actions/setup-node@v4
