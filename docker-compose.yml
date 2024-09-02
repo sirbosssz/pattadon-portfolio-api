@@ -2,13 +2,15 @@ version: '3.8'
 
 services:
   db:
-    image: mongo
+    image: postgres:16
     ports:
-      - '27017:27017'
-    restart: always
+      - '5432:5432'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      POSTGRES_USER: tester
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: e2e-test
+    volumes:
+      - ./data:/var/lib/postgresql/data
 
   app:
     build: .
@@ -20,7 +22,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: mongodb://root:example@db:27017
+      DATABASE_URL: postgresql://tester:example@db:5432/e2e-test
     volumes:
       - .:/app
       - /app/node_modules

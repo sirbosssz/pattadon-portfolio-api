@@ -9,36 +9,48 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Profiles {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  authId    String   @unique
-  email     String   @unique
+  id           String   @id @default(uuid())
+  authId       String   @unique
+  email        String   @unique
+  fullname     String
+  introduction String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  fullname  String
 
-  lookingForPositions    Positions[] @relation("LookingForPositions", fields: [lookingForPositionsIds], references: [id])
-  lookingForPositionsIds String[]    @db.ObjectId
-
-  currentPosition   Positions? @relation("CurrentPosition")
-  currentPositionId String?    @db.ObjectId
+  currentPositionId   String?
+  currentPosition     Positions?                   @relation(fields: [currentPositionId], references: [id])
+  lookingForPositions ProfileLookingForPositions[]
 
   @@map("profiles")
 }
 
 model Positions {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id   String @id @default(uuid())
+  name String @unique
 
-  profileThatLookingFor Profiles[] @relation("LookingForPositions", fields: [profileLookingForId], references: [id])
-  profileLookingForId   String[]  @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  profileThatCurrentPosition Profiles? @relation("CurrentPosition", fields: [profileCurrentPositionId], references: [id])
-  profileCurrentPositionId   String?  @unique @db.ObjectId
+  profileThatLookingFor   ProfileLookingForPositions[]
+  profileThatCurrentlyHas Profiles[]
 
   @@map("positions")
+}
+
+model ProfileLookingForPositions {
+  profileId String
+  profile   Profiles @relation(fields: [profileId], references: [id])
+
+  positionId String
+  position   Positions @relation(fields: [positionId], references: [id])
+
+  @@id([profileId, positionId])
+  @@map("profile_looking_for_positions")
 }
