@@ -33,17 +33,19 @@ jobs:
 
   e2e_tests:
     needs: [setup]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     environment: Test
 
-    # services:
-    #   mongodb:
-    #     image: mongo
-    #     env:
-    #       MONGO_INITDB_ROOT_USERNAME: root
-    #       MONGO_INITDB_ROOT_PASSWORD: example
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_USER: tester
+          POSTGRES_PASSWORD: example
+          POSTGRES_DB: e2e-test
     env:
       DATABASE_URL: ${{ vars.DATABASE_URL}}
+      DIRECT_URL: ${{ vars.DIRECT_URL}}
       FIREBASE_TYPE: ${{ secrets.FIREBASE_TYPE }}
       FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
       FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}

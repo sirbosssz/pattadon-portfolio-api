@@ -9,8 +9,6 @@ services:
       POSTGRES_USER: tester
       POSTGRES_PASSWORD: example
       POSTGRES_DB: e2e-test
-    volumes:
-      - ./data:/var/lib/postgresql/data
 
   app:
     build: .
@@ -23,8 +21,8 @@ services:
       - .env
     environment:
       DATABASE_URL: postgresql://tester:example@db:5432/e2e-test
+      DIRECT_URL: postgresql://tester:example@db:5432/e2e-test
     volumes:
       - .:/app
       - /app/node_modules
-    command: npm run test:e2e
-
+    command: sh -c "npx prisma migrate deploy && npm run test:e2e"

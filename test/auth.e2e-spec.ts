@@ -64,21 +64,25 @@ describe('Authentication Flow (e2e)', () => {
           authId: 'test-uid',
           email: 'test@example.com',
           fullname: 'Test User',
+          introduction: 'Example introduction',
           currentPosition: {
             connect: {
               id: currentPosition.id,
             },
           },
           lookingForPositions: {
-            connect: lookingForPositions.map((position) => ({
-              id: position.id,
-            })),
+            createMany: {
+              data: lookingForPositions.map((position) => ({
+                positionId: position.id,
+              })),
+            },
           },
         },
       })
     })
 
     afterAll(async () => {
+      await prismaClient.profileLookingForPositions.deleteMany()
       await prismaClient.profiles.deleteMany()
       await prismaClient.positions.deleteMany()
     })

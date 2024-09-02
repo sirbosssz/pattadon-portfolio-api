@@ -67,8 +67,8 @@ describe('AuthService', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         fullname: 'test',
-        lookingForPositionsIds: [],
-        currentPositionId: '',
+        introduction: 'test',
+        currentPositionId: 'position-id',
       }
       jest
         .spyOn(firebaseService, 'verifyToken')

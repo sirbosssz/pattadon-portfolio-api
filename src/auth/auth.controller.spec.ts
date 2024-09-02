@@ -38,7 +38,7 @@ describe('AuthController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         fullname: 'mock-fullname',
-        lookingForPositionsIds: [],
+        introduction: 'mock-introduction',
         currentPositionId: null,
       }
       const mockToken = 'mock-firebase-token'
