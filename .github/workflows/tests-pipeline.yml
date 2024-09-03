@@ -72,5 +72,7 @@ jobs:
           cache: 'npm'
       - name: Install node_modules
         run: npm install
+      - name: Run Prisma Migrate
+        run: npx prisma migrate deploy
       - name: Run E2E Tests
         run: npm run test:e2e
