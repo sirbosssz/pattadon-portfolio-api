@@ -43,6 +43,13 @@ jobs:
           POSTGRES_USER: tester
           POSTGRES_PASSWORD: example
           POSTGRES_DB: e2e-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: ${{ vars.DATABASE_URL}}
       DIRECT_URL: ${{ vars.DIRECT_URL}}
